@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VELOURA | Home decor</title>
+<meta name="theme-color" content="#2c0f36">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ INTRO ============ -->
+<div class="intro" id="intro">
+  <div class="cur l"></div>
+  <div class="cur r"></div>
+  <canvas id="fw"></canvas>
+
+  <div class="intro-box">
+    <p class="intro-hello">Welcome to</p>
+    <div class="intro-logo" id="introLogo">
+      <img id="introLogoImg" src="images/logo.png" alt="VELOURA">
+    </div>
+    <div class="intro-line"></div>
+    <p class="intro-sub">Decor that makes a house feel like home</p>
+    <p class="intro-about">VELOURA brings together lamps, rugs, mirrors, cushions and more, so you can style a whole room in one place.</p>
+
+    <ul class="intro-cats">
+      <li style="--i:0">Lighting</li>
+      <li style="--i:1">Rugs</li>
+      <li style="--i:2">Mirrors</li>
+      <li style="--i:3">Cushions</li>
+      <li style="--i:4">Planters</li>
+      <li style="--i:5">Wall decor</li>
+    </ul>
+
+    <button class="intro-enter" id="introEnter">Enter</button>
+    <p class="intro-perks">Free delivery above ₹1,999 · Cash on delivery · 7-day easy returns</p>
+    <p class="intro-note">Best with sound on</p>
+  </div>
+
+  <div class="intro-tools">
+    <button id="introMute" aria-label="Sound on or off">🔊 Sound on</button>
+    <button id="introSkip">Skip</button>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="top">
+  <div class="wrap bar">
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <a class="logo" href="#top">VELOURA</a>
+    <nav><a href="#shop">Shop</a><a href="#looks">Styles</a><a href="#about">About</a></nav>
+    <button class="pill" id="userBtn">Login</button>
+    <button class="pill" id="wishBtn">♥ <span class="lbl">Wishlist</span> <b id="wc">0</b></button>
+    <button class="pill" id="cartBtn"><span class="ic">🛒</span> <span class="lbl">Cart</span> <b id="cc">0</b></button>
+  </div>
+</header>
+
+<div class="mnav" id="mnav">
+  <a href="#shop">Shop</a>
+  <a href="#quiz">Style quiz</a>
+  <a href="#looks">Shop by style</a>
+  <a href="#about">About</a>
+  <a href="policies.html#shipping">Help and policies</a>
+</div>
+
+  <!-- ============ SPOTLIGHT HERO ============ -->
+  <section class="spot" id="spot" aria-label="Featured products">
+        <div class="spot-brand">
+      <span class="sb-label">✦ VELOURA</span>
+      <div class="sb-lines" aria-label="About VELOURA">
+        <span>Decor that makes a house feel like home.</span>
+        <span>Lamps, rugs, mirrors, cushions and more, all in one place.</span>
+        <span>Style a whole room, not just one corner.</span>
+      </div>
+      <a class="sb-link" href="#shop">Shop all →</a>
+    </div>
+    <div class="spot-ribbon" id="spotRibbon">
+      <span>Free delivery above ₹1,999</span>
+      <span>Cash on delivery</span>
+      <span>7-day easy returns</span>
+    </div>
+
+    <div class="spot-stage" id="spotStage">
+      <div class="spot-diag" id="spotDiag"></div>
+
+      <div class="spot-orb" id="spotOrb" data-cursor="View">
+        <div class="orb-ring"><i></i><i></i></div>
+        <div class="orb a" id="orbA"></div>
+        <div class="orb b" id="orbB"></div>
+      </div>
+
+      <div class="spot-copy">
+        <p class="spot-eyebrow" id="spotEyebrow"></p>
+        <h1 class="spot-title" id="spotTitle"></h1>
+        <p class="spot-price" id="spotPrice"></p>
+        <p class="spot-desc" id="spotDesc"></p>
+        <div class="spot-cta">
+          <a class="btn gold" id="spotShop" href="#shop">Shop now</a>
+          <button class="btn plain" id="spotAdd" type="button">Add to cart</button>
+        </div>
+      </div>
+
+      <aside class="spot-card" id="spotCard"></aside>
+      <div class="spot-thumbs" id="spotThumbs"></div>
+
+      <div class="spot-dock" id="spotDock">
+        <button data-room="Living room">Living room</button>
+        <button data-room="Bedroom">Bedroom</button>
+        <button data-room="Kitchen">Kitchen</button>
+        <button data-room="Entryway">Entryway</button>
+        <button data-fest="1">Festive</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- purane code ke liye khaali dabba, ye dikhta nahi -->
+  <div id="hero" hidden>
+    <h1 id="h1"></h1><span id="type"></span><div id="sparkles"></div><div id="dots"></div>
+    <div id="flame"></div><p id="torchHint"></p><button id="lightBtn" type="button"></button>
+  </div>
+
+  <!-- gold patti -->
+  <div class="marquee"><div class="track" id="track"></div></div>
+
+  <!-- ============ STYLE QUIZ ============ -->
+  <section id="quiz">
+    <div class="wrap">
+      <div class="qz" id="qz">
+        <div class="qz-side">
+          <p class="qz-count" style="color:var(--gold)">Style quiz</p>
+          <h2>Find the style that feels like you</h2>
+          <p>Three quick questions, then we pick pieces that suit your room.</p>
+          <div class="qz-bar"><i id="qzBarI"></i></div>
+        </div>
+        <div class="qz-main" id="qzMain"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section id="shop">
+    <div class="wrap">
+      <h2>Shop VELOURA</h2>
+      <p class="sub" id="count"></p>
+      <div class="chips" id="chips"></div>
+
+      <div class="shop-top">
+        <button class="btn ghost sm fx-open" id="fxOpen" type="button">☰ Filters</button>
+        <input class="shop-search" id="fSearch" type="search" placeholder="Search products" aria-label="Search products">
+        <select class="shop-sort" id="fSort" aria-label="Sort products">
+          <option value="feat">Featured</option>
+          <option value="new">Newest first</option>
+          <option value="plh">Price: low to high</option>
+          <option value="phl">Price: high to low</option>
+          <option value="off">Biggest discount</option>
+        </select>
+      </div>
+      <div class="active-f" id="activeF"></div>
+
+      <div class="shop-layout">
+        <aside class="fx" id="fx" aria-label="Filters">
+          <div class="fx-head">
+            <b>Filters</b>
+            <button type="button" class="fx-clear" data-clear="1">Clear all</button>
+            <button type="button" class="x2 fx-close" id="fxClose" aria-label="Close filters">×</button>
+          </div>
+          <label class="fo wish"><input type="checkbox" id="fWish"><span>♥ Wishlist only</span></label>
+
+          <div id="fxTop"></div>
+
+          <div class="fg open" id="fxPriceG">
+            <button class="fg-h" type="button" data-toggle="price"><span>Price</span><i></i></button>
+            <div class="fg-b">
+              <div class="pr-in">
+                <input id="pMin" type="number" inputmode="numeric" aria-label="Minimum price">
+                <span>–</span>
+                <input id="pMax" type="number" inputmode="numeric" aria-label="Maximum price">
+              </div>
+              <div class="range">
+                <div class="track"></div><div class="fill" id="pFill"></div>
+                <input id="rMin" type="range" aria-label="Minimum price slider">
+                <input id="rMax" type="range" aria-label="Maximum price slider">
+              </div>
+              <div class="pr-lab"><span id="pLo"></span><span id="pHi"></span></div>
+            </div>
+          </div>
+
+          <div id="fxBottom"></div>
+          <button type="button" class="btn gold full fx-apply" id="fxApply">Show results</button>
+        </aside>
+
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <div class="legacy">
+        <select id="fStyle"><option value=""></option><option>Minimal</option><option>Boho</option><option>Modern</option><option>Traditional</option></select>
+        <select id="fBud"><option value=""></option><option value="999"></option><option value="2999"></option><option value="9999"></option></select>
+      </div>
+    </div>
+  </section>
+
+  <div class="drawer-overlay" id="fxOverlay"></div>
+
+  <!-- ============ CELEBRATION DECOR ============ -->
+   <section id="about">
+    <div class="wrap">
+      <div class="ab">
+        <div class="ab-copy">
+          <p class="ab-eyebrow" style="--i:0">Why VELOURA</p>
+          <h2 class="ab-h" style="--i:1">A home feels best when it is <em>warm, soft</em> and a little bit yours.</h2>
+          <p class="ab-p" style="--i:2">We bring lamps, rugs, mirrors, cushions and more together in one place, so you can style a whole room instead of hunting for one piece at a time.</p>
+          <div class="ab-cta" style="--i:3">
+            <a class="btn gold" href="#quiz">Take the style quiz</a>
+            <a class="btn plain" href="#shop">Shop all</a>
+          </div>
+          <p class="ab-fest" style="--i:4">Looking for diyas, toran or lanterns for a puja or wedding? <button id="festBtn" type="button">Shop celebration decor →</button></p>
+        </div>
+
+        <div class="ab-stats" id="abStats"></div>
+      </div>
+
+      <div class="ab-perks">
+        <div class="ab-perk" style="--i:5"><i>🚚</i><div><b>Free delivery</b><span>On orders above ₹1,999</span></div></div>
+        <div class="ab-perk" style="--i:6"><i>💵</i><div><b>Cash on delivery</b><span>Pay when it arrives</span></div></div>
+        <a class="ab-perk" style="--i:7" href="policies.html#returns"><i>↩️</i><div><b>7-day easy returns</b><span>Read our returns policy</span></div></a>
+        <a class="ab-perk" style="--i:8" href="https://wa.me/918104591780" target="_blank" rel="noopener"><i>💬</i><div><b>Talk to us</b><span>Chat on WhatsApp</span></div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOP BY STYLE ============ -->
+  <section id="looks">
+    <div class="wrap">
+      <h2>Shop by style</h2>
+      <p class="sub">Not sure what you like? Start with a look.</p>
+      <div class="looks" id="looks-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ NEWSLETTER ============ -->
+    <section id="letter">
+    <div class="wrap">
+      <div class="nl">
+        <div class="nl-copy">
+          <p class="nl-eyebrow">The VELOURA letter</p>
+          <h2 class="nl-h">A little decor inspiration, <em>straight to your inbox.</em></h2>
+          <p class="nl-p">Styling ideas, new arrivals and the odd good offer. Unsubscribe any time.</p>
+          <form class="nl-form" id="nlForm" novalidate>
+            <input id="email" type="email" placeholder="Your email" autocomplete="email" aria-label="Email address">
+            <button class="btn gold" id="sub" type="submit">Join the letter</button>
+          </form>
+          <p class="nl-msg" id="nlMsg" role="status"></p>
+        </div>
+
+        <div class="nl-art" id="nlArt" aria-hidden="true">
+          <div class="env">
+            <i class="spark" style="--dx:-120px;--dy:-90px"></i>
+            <i class="spark" style="--dx:-60px;--dy:-130px"></i>
+            <i class="spark" style="--dx:0px;--dy:-150px"></i>
+            <i class="spark" style="--dx:70px;--dy:-125px"></i>
+            <i class="spark" style="--dx:125px;--dy:-85px"></i>
+            <i class="spark" style="--dx:-150px;--dy:-30px"></i>
+            <i class="spark" style="--dx:150px;--dy:-35px"></i>
+            <div class="env-back"></div>
+            <div class="env-letter"><b>Welcome ✦</b><span>You are on the list</span></div>
+            <div class="env-front"></div>
+            <div class="env-flap"></div>
+            <span class="env-seal">V</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <p>© VELOURA · Delivery across India · Cash on delivery · 7-day returns</p>
+    <p class="flinks">
+      <a href="policies.html#privacy">Privacy</a> ·
+      <a href="policies.html#shipping">Shipping</a> ·
+      <a href="policies.html#returns">Returns</a> ·
+      <a href="policies.html#terms">Terms</a> ·
+      <a href="policies.html#contact">Contact</a>
+    </p>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/918104591780" target="_blank" rel="noopener">Chat on WhatsApp</a>
+
+<!-- ============ LOGIN POPUP (email OTP) ============ -->
+<div class="modal" id="authModal" aria-hidden="true">
+  <div class="auth" role="dialog" aria-modal="true" aria-label="Log in or sign up">
+    <button class="x" id="authClose" aria-label="Close">×</button>
+
+    <div class="auth-side">
+      <span class="auth-emoji">🪔</span>
+      <h3>Welcome to VELOURA</h3>
+      <p>Log in with your email to track your orders and check out faster.</p>
+      <p>New here? Use code <b>HOME10</b> for 10% off on orders above ₹1,999.</p>
+      <span class="auth-code">HOME10</span>
+    </div>
+
+    <div class="auth-main">
+      <div id="stepEmail">
+        <h4 class="auth-h">Log in or sign up</h4>
+        <p class="auth-p">Enter your email and we will send you a 6-digit code. No password needed.</p>
+        <form id="emailForm" novalidate>
+          <label>Email<input id="aEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+          <button class="btn gold full" id="sendBtn" type="submit">Send code</button>
+        </form>
+      </div>
+
+      <div id="stepCode" hidden>
+        <h4 class="auth-h">Enter your code</h4>
+        <p class="auth-p">We sent a 6-digit code to <b id="sentTo"></b>. It is valid for 10 minutes.</p>
+        <form id="codeForm" novalidate>
+          <label>6-digit code<input id="aCode" class="code-in" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······"></label>
+          <label id="nameRow" hidden>New here? Tell us your name<input id="aName" autocomplete="name" placeholder="Your name"></label>
+          <button class="btn gold full" id="verifyBtn" type="submit">Verify and continue</button>
+        </form>
+        <div class="otp-links">
+          <button type="button" class="linkbtn" id="resendBtn" disabled>Resend code</button>
+          <button type="button" class="linkbtn" id="changeEmail">Use a different email</button>
+        </div>
+      </div>
+
+      <p class="err" id="aErr"></p>
+      <button class="guest" id="guestBtn">Continue as guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CART DRAWER ============ -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Shopping cart">
+  <div class="drawer-head">
+    <h3>Your cart <span id="bagCount"></span></h3>
+    <button class="x2" id="drawerClose" aria-label="Close cart">×</button>
+  </div>
+
+  <div class="ship" id="ship">
+    <p id="shipText"></p>
+    <div class="ship-bar"><i id="shipFill"></i></div>
+  </div>
+
+  <div class="bag-items" id="bagItems"></div>
+
+  <div class="bag-foot" id="bagFoot">
+    <div class="cp">
+      <input id="cpIn" placeholder="Coupon code" autocomplete="off">
+      <button id="cpBtn">Apply</button>
+    </div>
+    <p class="cp-msg" id="cpMsg"></p>
+    <div class="sum"><span>Subtotal</span><b id="sSub"></b></div>
+    <div class="sum" id="sDiscRow"><span id="sDiscLabel">Discount</span><b id="sDisc"></b></div>
+    <div class="sum"><span>Delivery</span><b id="sShip"></b></div>
+    <div class="sum total"><span>Total</span><b id="sTotal"></b></div>
+    <button class="btn gold full" id="checkoutBtn">Checkout</button>
+  </div>
+</aside>
+
+<!-- ============ CHECKOUT ============ -->
+<div class="modal" id="coModal" aria-hidden="true">
+  <div class="co" role="dialog" aria-modal="true" aria-label="Checkout">
+    <button class="x" id="coClose" aria-label="Close">×</button>
+
+    <div class="co-main" id="coMain">
+      <h3>Checkout</h3>
+      <form id="coForm" novalidate>
+        <div class="co-grid">
+          <label class="full">Full name<input id="coName" autocomplete="name"></label>
+          <label>Phone<input id="coPhone" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit mobile number"></label>
+          <label>Pincode<input id="coPin" inputmode="numeric" maxlength="6" autocomplete="postal-code" placeholder="6 digits"></label>
+          <label class="full">Address<input id="coAddr" autocomplete="street-address" placeholder="House no, street, area"></label>
+          <label>City<input id="coCity" autocomplete="address-level2"></label>
+          <label>State<input id="coState" autocomplete="address-level1"></label>
+        </div>
+        <fieldset class="pay">
+          <legend>Payment</legend>
+          <label class="opt"><input type="radio" name="pay" checked> Cash on delivery</label>
+          <label class="opt off"><input type="radio" name="pay" disabled> UPI / Cards <small>coming soon</small></label>
+        </fieldset>
+        <p class="err" id="coErr"></p>
+        <button class="btn gold full" id="coSubmit" type="submit">Place order</button>
+      </form>
+    </div>
+
+    <aside class="co-sum" id="coSum"></aside>
+    <div class="co-done" id="coDone" hidden></div>
+  </div>
+</div>
+
+<!-- ============ MY ORDERS ============ -->
+<div class="modal" id="ordModal" aria-hidden="true">
+  <div class="ord" role="dialog" aria-modal="true" aria-label="My orders">
+    <button class="x" id="ordClose" aria-label="Close">×</button>
+    <h3>My orders</h3>
+    <div id="ordList"></div>
+    <button class="guest" id="logoutBtn">Log out</button>
+  </div>
+</div>
+<footer class="ft" id="ft">
+  <div class="wrap">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <b class="ft-logo">VELOURA</b>
+        <p>Decor that makes a house feel like home. Lamps, rugs, mirrors, cushions and more, in one place.</p>
+        <a class="ft-wa" href="https://wa.me/918104591780" target="_blank" rel="noopener">Chat on WhatsApp</a>
+      </div>
+
+      <nav class="ft-col" id="ftShop" aria-label="Shop">
+        <h4>Shop</h4>
+        <button type="button" data-q="">All products</button>
+      </nav>
+
+      <nav class="ft-col" aria-label="Shop by room">
+        <h4>By room</h4>
+        <button type="button" data-room="Living room">Living room</button>
+        <button type="button" data-room="Bedroom">Bedroom</button>
+        <button type="button" data-room="Kitchen">Kitchen</button>
+        <button type="button" data-room="Entryway">Entryway</button>
+      </nav>
+
+      <nav class="ft-col" aria-label="Help">
+        <h4>Help</h4>
+        <a href="policies.html#shipping">Shipping &amp; delivery</a>
+        <a href="policies.html#returns">Returns &amp; refunds</a>
+        <a href="policies.html#privacy">Privacy</a>
+        <a href="policies.html#terms">Terms</a>
+        <a href="policies.html#contact">Contact us</a>
+      </nav>
+    </div>
+
+    <div class="ft-word" id="ftWord" aria-hidden="true">VELOURA</div>
+
+    <div class="ft-bar">
+      <span>© VELOURA · Delivery across India · Cash on delivery · 7-day returns</span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 46 46" aria-hidden="true"><circle class="bg" cx="23" cy="23" r="20"/><circle class="fg" id="ttRing" cx="23" cy="23" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
+  <span>↑</span>
+</button>
+<!-- review likhna -->
+<div class="modal" id="rvModal" aria-hidden="true">
+  <div class="ord rvm" role="dialog" aria-modal="true" aria-label="Write a review">
+    <button class="x" id="rvClose" aria-label="Close">×</button>
+    <h3>Rate this product</h3>
+    <p class="rvm-name" id="rvName"></p>
+    <div class="stars-pick" id="rvStars" role="group" aria-label="Rating">
+      <button type="button" data-v="1" aria-label="1 star">★</button>
+      <button type="button" data-v="2" aria-label="2 stars">★</button>
+      <button type="button" data-v="3" aria-label="3 stars">★</button>
+      <button type="button" data-v="4" aria-label="4 stars">★</button>
+      <button type="button" data-v="5" aria-label="5 stars">★</button>
+    </div>
+    <p class="rvm-hint" id="rvHint">Tap a star</p>
+    <label>Title (optional)<input id="rvTitle" maxlength="80" placeholder="Sum it up in a few words"></label>
+    <label>Your review<textarea id="rvText" rows="5" maxlength="1000" placeholder="What did you like or dislike? How does it look in your home?"></textarea></label>
+    <p class="err" id="rvErr"></p>
+    <button class="btn gold full" id="rvSubmit" type="button">Submit review</button>
+    <p class="rvm-note">Only customers who have received this product can review it.</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+<script src="filters.js"></script>
+<script src="fx.js"></script>
+<script src="spotlight.js"></script>
+<script src="quiz.js"></script>
+<script src="about.js"></script>
+<script src="outro.js"></script>
+<script src="mobile.js"></script>
+<script src="reviews.js"></script>
+</body>
+</html>

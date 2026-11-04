@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VELOURA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.pd{padding-top:26px;padding-bottom:30px}
+.crumbs{font-size:.88rem;color:var(--mute);margin-bottom:22px}
+.crumbs a:hover{color:var(--plum)}
+.crumbs span{margin:0 6px}
+
+.pd-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:44px;align-items:start}
+.pd-media{position:relative;overflow:hidden;display:grid;place-items:center;aspect-ratio:1/1;border-radius:26px;background:linear-gradient(135deg,var(--c1),var(--c2));border:1px solid var(--line)}
+.pd-media img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;transition:transform .25s ease-out}
+.pd-emoji{font-size:7rem}
+@media (hover:hover){.pd-media{cursor:zoom-in}.pd-media:hover img{transform:scale(1.9)}}
+.pd-media .off,.pd-media .tag{z-index:2}
+
+.pd h1{font-size:clamp(1.9rem,4vw,2.8rem);max-width:none;font-weight:600}
+.pd .meta{margin:6px 0 18px;font-size:.95rem}
+.pd-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px}
+.pd-price b{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--plum);line-height:1}
+.pd-price s{color:var(--mute)}
+.pd-price em{font-style:normal;color:#1f7a4d;font-weight:600;font-size:.92rem}
+.pd-stock{margin:12px 0 18px;font-size:.92rem;font-weight:500}
+.pd-stock.ok{color:#1f7a4d}
+.pd-stock.low{color:#b45f06}
+.pd-stock.out{color:#b5304f}
+.pd-desc{margin:0 0 24px;color:#3b3144;max-width:56ch;white-space:pre-line}
+
+.pd-buy{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.pd-buy .btn{margin:0;min-width:170px;text-align:center}
+.pd-buy .btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.qty button:disabled{opacity:.35;cursor:not-allowed}
+.heart2{width:46px;height:46px;border:1px solid var(--line);border-radius:50%;background:#fff;color:#b5304f;font-size:1.3rem;transition:transform .2s}
+.heart2:hover{transform:scale(1.1)}
+.goto{display:none;margin-top:12px;font-weight:600;color:var(--plum)}
+.goto.on{display:inline-block}
+
+.pd-perks{list-style:none;margin:26px 0 12px;padding:18px 20px;display:grid;gap:8px;background:#fff;border:1px solid var(--line);border-radius:16px;font-size:.92rem}
+.link{border:0;background:none;padding:0;color:var(--mute);text-decoration:underline;font-size:.9rem}
+
+.pd-details{margin-top:46px;padding:26px 28px;background:#fff;border:1px solid var(--line);border-radius:20px}
+.pd-details h3{font-size:1.6rem;margin-bottom:12px}
+.pd-details dl{display:grid;grid-template-columns:160px 1fr;gap:10px 18px;margin:0}
+.pd-details dt{color:var(--mute)}
+.pd-details dd{margin:0}
+
+#related-sec{padding:50px 0 30px}
+.rel{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:22px;margin-top:24px}
+.rel-card{display:block}
+
+@media (max-width:820px){.pd-grid{grid-template-columns:1fr;gap:26px}.pd-details dl{grid-template-columns:110px 1fr}}
+@media (max-width:640px){.bar .pill{margin-left:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="/">VELOURA</a>
+    <nav><a href="/#shop">Shop</a><a href="/#looks">Styles</a><a href="/#festive">Festive</a></nav>
+    <a class="pill" href="/#cart">Cart <b id="cc">0</b></a>
+  </div>
+</header>
+
+<main class="wrap pd">
+  <div class="crumbs" id="crumbs"></div>
+  <div id="view"><p class="muted">Loading…</p></div>
+</main>
+<section class="wrap rvs" id="reviews"></section>
+
+<section id="related-sec" hidden>
+  <div class="wrap">
+    <h2>You may also like</h2>
+    <div class="rel" id="related"></div>
+  </div>
+</section>
+
+<footer><div class="wrap">© VELOURA. Delivery across India · UPI, cards and COD · 7-day returns</div></footer>
+
+<a class="wa" href="https://wa.me/918104591780" target="_blank" rel="noopener">Chat on WhatsApp</a>
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+
+function toast(m) {
+  const t = $('toast'); t.textContent = m; t.className = 'on';
+  clearTimeout(toast.id); toast.id = setTimeout(() => t.className = '', 1800);
+}
+
+/* ---- cart aur wishlist: main site ke saath wahi localStorage ---- */
+function readList(key) {
+  try { const v = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function writeList(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+const updateCount = () => { $('cc').textContent = readList('vlr_bag').reduce((s, b) => s + b.qty, 0); };
+
+/* ---- page ---- */
+const id = Number(new URLSearchParams(location.search).get('id'));
+
+async function load() {
+  updateCount();
+  if (!Number.isInteger(id)) return notFound();
+  try {
+    const res = await fetch('/api/products/' + id);
+    if (!res.ok) return notFound();
+    const p = await res.json();
+        renderProduct(p);
+    loadRelated(p);
+    loadReviews(p);
+  } catch (e) {
+    $('view').innerHTML = '<p class="muted">Could not load this product. Is the backend running?</p>';
+  }
+}
+
+function notFound() {
+  document.title = 'Product not found | VELOURA';
+  $('view').innerHTML = '<div class="empty">This product is not available any more. <a href="/#shop"><b>Back to the shop</b></a></div>';
+}
+
+function renderProduct(p) {
+  document.title = p.name + ' | VELOURA';
+  const off = p.off || 0;
+  const desc = (p.description || '').trim() || `A ${p.style.toLowerCase()} piece for your ${p.room.toLowerCase()}.`;
+  const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
+  const maxQty = Math.min(10, p.stock);
+  let qty = 1;
+
+  $('crumbs').innerHTML = `<a href="/">Home</a><span>/</span><a href="/#shop">Shop</a><span>/</span>${esc(p.room)}<span>/</span>${esc(p.name)}`;
+
+  $('view').innerHTML = `
+  <div class="pd-grid">
+    <div class="pd-media" id="zoom" style="--c1:${esc(p.c1)};--c2:${esc(p.c2)}">
+      <span class="pd-emoji">${esc(p.emoji || '🏠')}</span>
+      ${p.image ? `<img id="pimg" src="/${esc(p.image)}" alt="${esc(p.name)}" onerror="this.remove()">` : ''}
+      ${off ? `<span class="off">${off}% off</span>` : ''}
+      ${p.fest ? '<span class="tag">Festive</span>' : ''}
+    </div>
+
+    <div>
+      <h1>${esc(p.name)}</h1>
+      <p class="meta">${esc(p.room)} · ${esc(p.style)}</p>
+            ${p.ratingCount ? `<a class="pd-rate" href="#reviews"><span class="stars" style="--r:${p.ratingAvg}"></span><b>${p.ratingAvg.toFixed(1)}</b><span class="muted">(${p.ratingCount} review${p.ratingCount === 1 ? '' : 's'})</span></a>` : ''}
+      <div class="pd-price">
+        <b>${inr(p.salePrice)}</b>
+        ${off ? `<s>${inr(p.price)}</s><em>You save ${inr(p.price - p.salePrice)}</em>` : ''}
+      </div>
+      <p class="pd-stock ${out ? 'out' : low ? 'low' : 'ok'}">${out ? 'Out of stock' : low ? 'Only ' + p.stock + ' left' : 'In stock'}</p>
+      <p class="pd-desc">${esc(desc)}</p>
+
+      <div class="pd-buy">
+        <div class="qty">
+          <button id="qm" aria-label="Decrease quantity" disabled>−</button>
+          <span id="qv">1</span>
+          <button id="qp" aria-label="Increase quantity" ${maxQty <= 1 ? 'disabled' : ''}>+</button>
+        </div>
+        <button class="btn gold" id="addBtn" ${out ? 'disabled' : ''}>${out ? 'Sold out' : 'Add to cart'}</button>
+        <button class="heart2" id="wishBtn" aria-label="Save to wishlist">♡</button>
+      </div>
+      <a class="goto" id="goto" href="/#cart">Added. View cart →</a>
+
+      <ul class="pd-perks">
+        <li>🚚 Free delivery on orders above ₹1,999</li>
+        <li>💵 Cash on delivery available</li>
+        <li>↩️ 7-day easy returns</li>
+      </ul>
+      <button class="link" id="shareBtn">Share this product</button>
+    </div>
+  </div>
+
+  <div class="pd-details">
+    <h3>Product details</h3>
+    <dl>
+      <dt>Room</dt><dd>${esc(p.room)}</dd>
+      <dt>Style</dt><dd>${esc(p.style)}</dd>
+      <dt>Collection</dt><dd>${p.fest ? 'Festive' : 'Everyday'}</dd>
+      <dt>Price (MRP)</dt><dd>${inr(p.price)}</dd>
+      <dt>Availability</dt><dd>${out ? 'Out of stock' : low ? 'Only ' + p.stock + ' left' : 'In stock'}</dd>
+    </dl>
+  </div>`;
+
+  /* quantity */
+  const syncQty = () => {
+    $('qv').textContent = qty;
+    $('qm').disabled = qty <= 1;
+    $('qp').disabled = qty >= maxQty;
+  };
+  $('qm').onclick = () => { if (qty > 1) { qty--; syncQty(); } };
+  $('qp').onclick = () => { if (qty < maxQty) { qty++; syncQty(); } };
+
+  /* add to cart */
+  $('addBtn').onclick = () => {
+    const bag = readList('vlr_bag');
+    const row = bag.find(x => x.id === p.id);
+    const have = row ? row.qty : 0;
+    if (have >= maxQty) return toast(have >= 10 ? 'You can order up to 10 of one item' : 'All available stock is already in your cart');
+    const add = Math.min(qty, maxQty - have);
+    if (row) row.qty += add; else bag.push({ id: p.id, qty: add });
+    writeList('vlr_bag', bag);
+    updateCount();
+    toast(p.name + ' added to cart');
+    $('goto').classList.add('on');
+  };
+
+  /* wishlist */
+  const syncHeart = () => { $('wishBtn').textContent = readList('wish').includes(p.id) ? '♥' : '♡'; };
+  $('wishBtn').onclick = () => {
+    const w = readList('wish');
+    const next = w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id];
+    writeList('wish', next);
+    syncHeart();
+    toast(next.includes(p.id) ? 'Saved to wishlist' : 'Removed from wishlist');
+  };
+  syncHeart();
+
+  /* share */
+  $('shareBtn').onclick = async () => {
+    try { if (navigator.share) { await navigator.share({ title: p.name, url: location.href }); return; } } catch (e) { return; }
+    try { await navigator.clipboard.writeText(location.href); toast('Link copied'); } catch (e) { toast(location.href); }
+  };
+
+  /* hover zoom: mouse jahan hai wahi hissa bada hota hai */
+  const img = $('pimg');
+  if (img && matchMedia('(hover: hover)').matches) {
+    $('zoom').addEventListener('mousemove', e => {
+      const r = $('zoom').getBoundingClientRect();
+      img.style.transformOrigin = ((e.clientX - r.left) / r.width * 100) + '% ' + ((e.clientY - r.top) / r.height * 100) + '%';
+    });
+  }
+}
+
+/* ---- You may also like ---- */
+async function loadRelated(p) {
+  try {
+    const res = await fetch('/api/products?room=' + encodeURIComponent(p.room));
+    if (!res.ok) return;
+    const list = (await res.json()).filter(r => r.id !== p.id);
+    list.sort((a, b) => (b.style === p.style) - (a.style === p.style));
+    const four = list.slice(0, 4);
+    if (!four.length) return;
+    $('related').innerHTML = four.map(r => `
+      <a class="prod rel-card" href="/product.html?id=${r.id}">
+        <div class="thumb" style="--c1:${esc(r.c1)};--c2:${esc(r.c2)}">
+          ${r.image ? `<img class="pimg" src="/${esc(r.image)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+          <span class="emo">${esc(r.emoji || '🏠')}</span>
+        </div>
+        <div class="body">
+          <h3>${esc(r.name)}</h3>
+          <p class="meta">${esc(r.room)} · ${esc(r.style)}</p>
+          <div class="row"><span class="price">${inr(r.salePrice)}${r.off ? `<s>${inr(r.price)}</s>` : ''}</span></div>
+        </div>
+      </a>`).join('');
+    $('related-sec').hidden = false;
+  } catch (e) {}
+}
+/* ---- Customer reviews ---- */
+let rvSort = 'recent', rvPage = 1, rvProduct = null;
+const dateStr = d => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+async function loadReviews(p, append) {
+  rvProduct = p;
+  let d;
+  try {
+    const res = await fetch(`/api/reviews/${p.id}?sort=${rvSort}&page=${rvPage}`);
+    if (!res.ok) return;
+    d = await res.json();
+  } catch (e) { return; }
+
+  const s = d.summary;
+  if (!append) {
+    $('reviews').innerHTML = `
+      <h2>Customer reviews</h2>
+      <div class="rv-top">
+        <div class="rv-avg">
+          <b>${s.count ? s.avg.toFixed(1) : '–'}</b>
+          <span class="stars" style="--r:${s.avg}"></span>
+          <div class="muted">${s.count} review${s.count === 1 ? '' : 's'}</div>
+        </div>
+        <div class="rv-bars">${[5, 4, 3, 2, 1].map(n => `
+          <div class="rv-bar"><span>${n} ★</span><i><span style="width:${s.count ? s.counts[n] / s.count * 100 : 0}%"></span></i><span>${s.counts[n]}</span></div>`).join('')}
+        </div>
+        <a class="btn gold" href="/?review=${p.id}">Write a review</a>
+      </div>
+      ${s.count ? `<div class="rv-tools">
+          <span class="muted">Reviews are from customers who received this product.</span>
+          <select id="rvSort" aria-label="Sort reviews">
+            <option value="recent"${rvSort === 'recent' ? ' selected' : ''}>Most recent</option>
+            <option value="high"${rvSort === 'high' ? ' selected' : ''}>Highest rated</option>
+            <option value="low"${rvSort === 'low' ? ' selected' : ''}>Lowest rated</option>
+          </select>
+        </div>`
+        : '<p class="muted" style="margin-top:18px">No reviews yet. Customers can share their experience once the product has been delivered to them.</p>'}
+      <div class="rv-list" id="rvList"></div>
+      <div id="rvMore"></div>`;
+  }
+
+  $('rvList').insertAdjacentHTML('beforeend', d.reviews.map(r => `
+    <article class="rv-item">
+      <span class="stars" style="--r:${r.rating}"></span>
+      ${r.title ? `<h4>${esc(r.title)}</h4>` : ''}
+      <p>${esc(r.text)}</p>
+      <div class="rv-meta"><b>${esc(r.name)}</b>${r.verified ? '<span class="rv-ok">✓ Verified purchase</span>' : ''}<span>${dateStr(r.date)}</span></div>
+    </article>`).join(''));
+  $('rvMore').innerHTML = d.hasMore ? '<button class="btn plain" id="rvMoreBtn" type="button" style="margin-top:16px">Show more reviews</button>' : '';
+}
+
+$('reviews').addEventListener('change', e => {
+  if (e.target.id === 'rvSort') { rvSort = e.target.value; rvPage = 1; loadReviews(rvProduct); }
+});
+$('reviews').addEventListener('click', e => {
+  if (e.target.id === 'rvMoreBtn') { rvPage++; loadReviews(rvProduct, true); }
+});
+
+load();
+</script>
+</body>
+</html>

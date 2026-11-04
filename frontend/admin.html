@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VELOURA Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{--bg:#f6f3f8;--ink:#1e1625;--mute:#6d6275;--plum:#4a1c55;--deep:#2c0f36;--gold:#d9b66b;--line:#e4dce9;--ok:#1f7a4d;--bad:#b5304f}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Outfit,system-ui,sans-serif;line-height:1.5}
+h2,h3{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600}
+h2{font-size:2rem}
+button{font:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.mute{color:var(--mute)}
+.bad{color:var(--bad)}
+.err{min-height:1.3em;margin:6px 0;color:var(--bad);font-size:.9rem}
+
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+input[type=checkbox]{width:auto}
+label{display:flex;flex-direction:column;gap:5px;font-size:.88rem;color:var(--mute)}
+.btn{border:0;border-radius:999px;padding:11px 22px;font-weight:600;background:var(--plum);color:#fff}
+.btn.gold{background:linear-gradient(135deg,#f0d28a,#d9b66b);color:var(--deep)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:#fff;color:var(--bad);border:1px solid #efc9d3}
+.btn.sm{padding:6px 14px;font-size:.85rem}
+.btn:disabled{opacity:.6;cursor:wait}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:16px;background:radial-gradient(circle at 30% 20%,#5d2468,var(--deep) 65%)}
+.card{background:#fff;border-radius:22px;padding:32px;width:min(400px,100%);display:flex;flex-direction:column;gap:14px}
+.card.wide{width:min(640px,100%);max-height:92vh;overflow:auto}
+.logo{font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.3em;color:var(--gold)}
+.card .logo{color:var(--plum);text-align:center;font-size:1.3rem}
+
+/* layout */
+.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;height:60px;padding:0 22px;background:var(--deep);color:#fff}
+.tabs{display:flex;gap:6px;margin-left:20px}
+.tabs button{border:0;background:none;color:rgba(255,255,255,.7);padding:8px 16px;border-radius:999px}
+.tabs button.on{background:rgba(217,182,107,.2);color:var(--gold)}
+.vsite{margin-left:auto;color:rgba(255,255,255,.75);text-decoration:none;font-size:.9rem}
+main{max-width:1150px;margin:0 auto;padding:26px 20px 80px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.bar select{width:auto}
+
+/* dashboard */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:2.1rem;color:var(--plum);line-height:1.1}
+.stat span{color:var(--mute);font-size:.88rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}
+.panel h3{font-size:1.5rem;margin-bottom:8px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.row:last-child{border:0}
+
+/* orders */
+.o{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:14px}
+.o-h{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:10px}
+.o-h b{font-size:1.1rem}
+.o-b{display:grid;grid-template-columns:1.2fr 1fr .6fr;gap:18px;font-size:.92rem}
+.o-b p{margin:0 0 4px}
+.o-b ul{margin:0;padding:0;list-style:none}
+.o-b li{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
+.o-f{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.st{padding:3px 12px;border-radius:999px;font-size:.78rem;font-weight:600;background:#f3e7c4;color:#7a5a12}
+.st-Packed{background:#e6dcf2;color:#5b2d78}
+.st-Shipped{background:#d9e8f6;color:#1d4f7c}
+.st-Delivered{background:#d9f0e2;color:#1f6b45}
+.st-Cancelled{background:#f6dada;color:#9a2b2b}
+
+/* products */
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:18px}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:middle}
+th{color:var(--mute);font-weight:500;font-size:.82rem}
+tr:last-child td{border:0}
+.th{position:relative;display:grid;place-items:center;width:56px;height:56px;border-radius:12px;overflow:hidden;background:#efe6f3;font-size:1.6rem}
+.th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+td.acts{white-space:nowrap}
+
+/* product form */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(28,10,36,.55)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g2 .f{grid-column:1/-1}
+.chk{flex-direction:row;align-items:center;gap:8px;color:var(--ink)}
+.acts{display:flex;justify-content:flex-end;gap:10px}
+
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:90;background:var(--deep);color:#fff;padding:11px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .25s}
+#toast.on{opacity:1}
+
+@media (max-width:760px){.two,.o-b,.g2{grid-template-columns:1fr}.tabs{margin-left:6px}.top{gap:8px;padding:0 12px}.vsite{display:none}.tabs button{padding:8px 10px}}
+textarea{resize:vertical}
+</style>
+</head>
+<body>
+
+<!-- login -->
+<div class="login" id="login">
+  <form class="card" id="loginForm">
+    <div class="logo">VELOURA</div>
+    <h2 style="text-align:center">Admin login</h2>
+    <label>Email<input id="lemail" type="email" autocomplete="username" required></label>
+    <label>Password<input id="lpass" type="password" autocomplete="current-password" required></label>
+    <p class="err" id="lerr"></p>
+    <button class="btn gold">Log in</button>
+  </form>
+</div>
+
+<!-- app -->
+<div id="app" hidden>
+  <header class="top">
+    <span class="logo">VELOURA</span>
+    <nav class="tabs" id="tabs">
+      <button class="on" data-t="dash">Dashboard</button>
+      <button data-t="orders">Orders</button>
+      <button data-t="products">Products</button>
+            <button data-t="reviews">Reviews</button>
+    </nav>
+    <a class="vsite" href="/" target="_blank">View site</a>
+    <button class="btn ghost sm" id="logout">Log out</button>
+  </header>
+
+  <main>
+    <section id="s-dash">
+      <div class="stats" id="stats"></div>
+      <div class="two">
+        <div class="panel"><h3>Top selling</h3><div id="top"></div></div>
+        <div class="panel"><h3>Low stock</h3><div id="low"></div></div>
+      </div>
+    </section>
+
+    <section id="s-orders" hidden>
+      <div class="bar">
+        <h2>Orders</h2>
+        <select id="ofilter">
+          <option value="">All orders</option>
+          <option>Placed</option><option>Packed</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option>
+        </select>
+      </div>
+      <div id="olist"></div>
+    </section>
+
+    <section id="s-products" hidden>
+      <div class="bar"><h2>Products</h2><button class="btn gold" id="addP">+ Add product</button></div>
+      <div class="tw"><table id="ptable"></table></div>
+    </section>
+        <section id="s-reviews" hidden>
+      <div class="bar"><h2>Reviews</h2></div>
+      <div id="rlist"></div>
+    </section>
+  </main>
+</div>
+
+
+<!-- product form -->
+<div class="modal" id="pm" hidden>
+  <form class="card wide" id="pform">
+    <h3 id="ptitle">Add product</h3>
+    <input type="hidden" id="pid">
+    <div class="g2">
+      <label class="f">Name<input id="pname" maxlength="120"></label>
+      <label>Room
+        <select id="proom"><option>Living room</option><option>Bedroom</option><option>Kitchen</option><option>Entryway</option></select>
+      </label>
+      <label>Style
+        <select id="pstyle"><option>Minimal</option><option>Boho</option><option>Modern</option><option>Traditional</option></select>
+      </label>
+      <label>Price (₹, MRP)<input id="pprice" type="number" min="1" step="1"></label>
+      <label>Discount %<input id="pdisc" type="number" min="0" max="90" step="1" value="0"></label>
+      <label>Stock<input id="pstock" type="number" min="0" step="1" value="25"></label>
+      <label>Emoji (shown if no photo)<input id="pemoji" maxlength="4" placeholder="🏠"></label>
+      <label class="chk"><input id="pfest" type="checkbox"> Festive collection</label>
+            <label class="f">Description<textarea id="pdesc" rows="4" maxlength="1500" placeholder="Material, size, colour, care instructions..."></textarea></label>
+                  <label>Collection<input id="pcat" list="catList" maxlength="40" placeholder="e.g. Lighting"></label>
+      <label>Material<input id="pmat" list="matList" maxlength="40" placeholder="e.g. Brass"></label>
+      <label>Height (cm)<input id="pheight" type="number" min="1" max="500" step="1" placeholder="optional"></label>
+      <datalist id="catList"><option>Lighting</option><option>Rugs</option><option>Mirrors</option><option>Cushions</option><option>Vases</option><option>Furniture</option><option>Bedding</option><option>Wall decor</option><option>Planters</option><option>Storage</option><option>Festive</option></datalist>
+      <datalist id="matList"><option>Brass</option><option>Ceramic</option><option>Cane</option><option>Jute</option><option>Wood</option><option>Cotton</option><option>Linen</option><option>Terracotta</option><option>Glass</option><option>Iron</option><option>Copper</option><option>Resin</option></datalist>
+      <label class="f">Photo (JPG, PNG or WEBP, up to 3 MB)<input id="pfile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+    </div>
+    <p class="err" id="perr"></p>
+    <div class="acts">
+      <button type="button" class="btn ghost" id="pcancel">Cancel</button>
+      <button class="btn gold" id="psave">Save</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+const orderNo = id => 'VLR' + String(id).padStart(5, '0');
+const fmtDate = s => new Date(s).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+const TOKEN_KEY = 'vlr_admin_token';
+const tok = () => localStorage.getItem(TOKEN_KEY);
+
+function toast(m) {
+  const t = $('toast'); t.textContent = m; t.className = 'on';
+  clearTimeout(toast.id); toast.id = setTimeout(() => t.className = '', 2200);
+}
+
+/* ---------- server se baat ---------- */
+async function api(path, opts = {}) {
+  const headers = { Authorization: 'Bearer ' + tok() };
+  if (opts.body && !(opts.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+  const res = await fetch('/api' + path, { ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401 || res.status === 403) { logout(data.error); throw new Error(data.error || 'Not allowed'); }
+  if (!res.ok) throw new Error(data.error || 'Something went wrong');
+  return data;
+}
+const run = p => p.catch(e => toast(e.message));
+
+/* ---------- login / logout ---------- */
+function logout(msg) {
+  localStorage.removeItem(TOKEN_KEY);
+  $('app').hidden = true; $('login').hidden = false;
+  $('lerr').textContent = msg || '';
+}
+$('logout').onclick = () => logout();
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('lerr').textContent = '';
+  try {
+    const r = await fetch('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: $('lemail').value, password: $('lpass').value })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Login failed');
+    localStorage.setItem(TOKEN_KEY, d.token);
+    $('lpass').value = '';
+    await enter();
+  } catch (err) { $('lerr').textContent = err.message; }
+});
+
+async function enter() {
+  let s;
+  try { s = await api('/admin/stats'); }            // admin nahi hua to yahan 403 aayega
+  catch (e) { $('lerr').textContent = e.message; return; }
+  $('login').hidden = true; $('app').hidden = false;
+  renderStats(s);
+}
+
+/* ---------- tabs ---------- */
+function show(t) {
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  ['dash', 'orders', 'products', 'reviews'].forEach(n => $('s-' + n).hidden = n !== t);
+  if (t === 'dash') run(loadStats());
+  if (t === 'orders') run(loadOrders());
+  if (t === 'products') run(loadProducts());
+  if (t === 'reviews') run(loadReviews());
+}
+$('tabs').onclick = e => { const b = e.target.closest('button'); if (b) show(b.dataset.t); };
+
+/* ---------- dashboard ---------- */
+async function loadStats() { renderStats(await api('/admin/stats')); }
+function renderStats(s) {
+  const cards = [
+    [s.today.orders, 'Orders today'], [inr(s.today.revenue), 'Revenue today'],
+    [inr(s.revenue), 'Total revenue'], [s.orders, 'Total orders'],
+    [s.pending, 'To pack or ship'], [s.customers, 'Customers']
+  ];
+  $('stats').innerHTML = cards.map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${l}</span></div>`).join('');
+  $('top').innerHTML = s.top.length
+    ? s.top.map(t => `<div class="row"><span>${esc(t.name)}</span><b>${t.qty} sold</b></div>`).join('')
+    : '<p class="mute">No sales yet</p>';
+  $('low').innerHTML = s.lowStock.length
+    ? s.lowStock.map(p => `<div class="row"><span>${esc(p.name)}</span><b class="${p.stock === 0 ? 'bad' : ''}">${p.stock} left</b></div>`).join('')
+    : '<p class="mute">All products are well stocked</p>';
+}
+
+/* ---------- orders ---------- */
+const NEXT = { Placed: 'Packed', Packed: 'Shipped', Shipped: 'Delivered' };
+
+async function loadOrders() {
+  const st = $('ofilter').value;
+  renderOrders(await api('/admin/orders' + (st ? '?status=' + encodeURIComponent(st) : '')));
+}
+$('ofilter').onchange = () => run(loadOrders());
+
+function renderOrders(list) {
+  $('olist').innerHTML = list.length ? list.map(o => {
+    const c = o.customer;
+    const acts = NEXT[o.status]
+      ? `<button class="btn sm" data-no="${o.id}" data-to="${NEXT[o.status]}">Mark ${NEXT[o.status]}</button>
+         <button class="btn danger sm" data-no="${o.id}" data-to="Cancelled">Cancel order</button>`
+      : '<span class="mute">No further actions</span>';
+    return `<article class="o">
+      <div class="o-h"><b>${orderNo(o.id)}</b><span class="st st-${esc(o.status)}">${esc(o.status)}</span><span class="mute">${fmtDate(o.created_at)}</span></div>
+      <div class="o-b">
+        <div>
+          <p><b>${esc(c.name)}</b> · ${esc(c.phone)}</p>
+          <p>${esc(c.address)}</p>
+          <p>${esc(c.city)}, ${esc(c.state)} ${esc(c.pincode)}</p>
+          <p class="mute">${esc(c.email)}</p>
+        </div>
+        <ul>${o.items.map(i => `<li><span>${esc(i.name)} × ${i.qty}</span><span>${inr(i.price * i.qty)}</span></li>`).join('')}</ul>
+        <div>
+          <p><b>${inr(o.total)}</b></p>
+          <p class="mute">${esc(o.payment)}${o.coupon ? ' · ' + esc(o.coupon) : ''}</p>
+        </div>
+      </div>
+      <div class="o-f">${acts}</div>
+    </article>`;
+  }).join('') : '<p class="mute">No orders found</p>';
+}
+
+$('olist').addEventListener('click', e => {
+  const b = e.target.closest('[data-to]');
+  if (!b) return;
+  const to = b.dataset.to;
+  if (to === 'Cancelled' && !confirm('Cancel this order? The stock will go back to the shop.')) return;
+  b.disabled = true;
+  run(api('/admin/orders/' + b.dataset.no + '/status', { method: 'PATCH', body: JSON.stringify({ status: to }) })
+    .then(() => { toast('Order updated'); return loadOrders(); })
+    .finally(() => { b.disabled = false; }));
+});
+
+/* ---------- products ---------- */
+let PRODS = [], bust = Date.now();
+
+async function loadProducts() { PRODS = await api('/admin/products'); renderProducts(); }
+
+function renderProducts() {
+  $('ptable').innerHTML = '<thead><tr><th></th><th>Product</th><th>Price</th><th>Off</th><th>Stock</th><th></th></tr></thead><tbody>' +
+    PRODS.map(p => `<tr>
+      <td><div class="th"><span>${esc(p.emoji || '🏠')}</span>${p.image ? `<img src="/${esc(p.image)}?v=${bust}" alt="" onerror="this.remove()">` : ''}</div></td>
+      <td><b>${esc(p.name)}</b><br><small class="mute">${esc(p.room)} · ${esc(p.style)}${p.fest ? ' · Festive' : ''}</small></td>
+      <td>${inr(p.price)}</td>
+      <td>${p.discount}%</td>
+      <td class="${p.stock <= 5 ? 'bad' : ''}">${p.stock}</td>
+      <td class="acts"><button class="btn ghost sm" data-edit="${p.id}">Edit</button> <button class="btn danger sm" data-del="${p.id}">Delete</button></td>
+    </tr>`).join('') + '</tbody>';
+}
+
+function openProduct(p) {
+  $('ptitle').textContent = p ? 'Edit product' : 'Add product';
+  $('pid').value = p ? p.id : '';
+  $('pname').value = p ? p.name : '';
+  $('proom').value = p ? p.room : 'Living room';
+  $('pstyle').value = p ? p.style : 'Minimal';
+  $('pprice').value = p ? p.price : '';
+  $('pdisc').value = p ? p.discount : 0;
+  $('pstock').value = p ? p.stock : 25;
+  $('pemoji').value = p ? p.emoji : '';
+  $('pfest').checked = p ? p.fest : false;
+    $('pdesc').value = p ? (p.description || '') : '';
+      $('pcat').value = p ? (p.category || '') : '';
+  $('pmat').value = p ? (p.material || '') : '';
+  $('pheight').value = p && p.heightCm != null ? p.heightCm : '';
+  $('pfile').value = '';
+  $('perr').textContent = '';
+  $('pm').hidden = false;
+}
+const closeProduct = () => { $('pm').hidden = true; };
+
+$('addP').onclick = () => openProduct(null);
+$('pcancel').onclick = closeProduct;
+$('pm').addEventListener('click', e => { if (e.target === $('pm')) closeProduct(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProduct(); });
+
+$('ptable').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del]');
+  if (ed) openProduct(PRODS.find(p => p.id === +ed.dataset.edit));
+  if (del) {
+    const p = PRODS.find(x => x.id === +del.dataset.del);
+    if (!p || !confirm('Delete "' + p.name + '"? This cannot be undone.')) return;
+    run(api('/admin/products/' + p.id, { method: 'DELETE' }).then(() => { toast('Product deleted'); return loadProducts(); }));
+  }
+});
+
+$('pform').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('perr').textContent = '';
+  const id = $('pid').value;
+  const body = {
+    name: $('pname').value, room: $('proom').value, style: $('pstyle').value,
+    price: $('pprice').value, discount: $('pdisc').value, stock: $('pstock').value,
+    emoji: $('pemoji').value,    description: $('pdesc').value,     category: $('pcat').value, material: $('pmat').value, heightCm: $('pheight').value,fest: $('pfest').checked
+  };
+  $('psave').disabled = true;
+  try {
+    const saved = await api(id ? '/admin/products/' + id : '/admin/products', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    const file = $('pfile').files[0];
+    if (file) {
+      const fd = new FormData(); fd.append('photo', file);
+      await api('/admin/products/' + saved.id + '/image', { method: 'POST', body: fd });
+      bust = Date.now();
+    }
+    closeProduct(); toast('Product saved');
+    await loadProducts();
+  } catch (err) {
+    $('perr').textContent = err.message;
+  } finally {
+    $('psave').disabled = false;
+  }
+});
+
+/* ---------- reviews ---------- */
+async function loadReviews() { renderReviews(await api('/admin/reviews')); }
+
+function renderReviews(list) {
+  $('rlist').innerHTML = list.length ? list.map(r => `
+    <article class="o">
+      <div class="o-h"><b>${esc(r.product)}</b>
+        <span class="st st-${r.status === 'hidden' ? 'Cancelled' : 'Delivered'}">${r.status === 'hidden' ? 'Hidden' : 'Visible'}</span>
+        <span class="mute">${fmtDate(r.created_at)}</span></div>
+      <p style="margin:0 0 6px"><b>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</b> ${esc(r.title)}</p>
+      <p style="margin:0 0 8px">${esc(r.text)}</p>
+      <p class="mute" style="margin:0">${esc(r.name)} · ${esc(r.email)}</p>
+      <div class="o-f">
+        <button class="btn sm" data-rvt="${r.id}" data-to="${r.status === 'hidden' ? 'published' : 'hidden'}">${r.status === 'hidden' ? 'Show on site' : 'Hide from site'}</button>
+        <button class="btn danger sm" data-rvd="${r.id}">Delete</button>
+      </div>
+    </article>`).join('') : '<p class="mute">No reviews yet</p>';
+}
+
+$('rlist').addEventListener('click', e => {
+  const t = e.target.closest('[data-rvt]'), d = e.target.closest('[data-rvd]');
+  if (t) run(api('/admin/reviews/' + t.dataset.rvt, { method: 'PATCH', body: JSON.stringify({ status: t.dataset.to }) }).then(loadReviews));
+  if (d && confirm('Delete this review for good?')) run(api('/admin/reviews/' + d.dataset.rvd, { method: 'DELETE' }).then(loadReviews));
+});
+
+/* ---------- shuruat ---------- */
+if (tok()) enter();
+</script>
+</body>
+</html>
