@@ -152,7 +152,7 @@ $('sub').onclick = () => {
   else toast('Enter a valid email address');
 };
 
-const API = location.port === '3000' ? '/api' : 'http://localhost:3000/api';
+const API = 'https://veloura-60ur.onrender.com/api';
 
 async function loadProducts() {
   $('grid').innerHTML = '<p class="empty">Loading products…</p>';
