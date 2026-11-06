@@ -991,3 +991,43 @@ img,video,canvas{max-width:100%}
 .rv-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:.8rem;color:var(--mute)}
 .rv-ok{font-weight:600;color:#1f7a4d}
 @media (max-width:700px){.rv-top{grid-template-columns:1fr;gap:16px}}
+@media (max-width: 640px) {
+  .rvs {
+    padding: 10px 0 24px;
+  }
+
+  .rv-top {
+    padding: 20px 16px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+
+  .rv-avg b {
+    font-size: 3rem;
+  }
+
+  .rv-bars {
+    gap: 9px;
+  }
+
+  .rv-bar {
+    grid-template-columns: 30px minmax(0, 1fr) 20px;
+    gap: 8px;
+  }
+
+  .rv-tools {
+    gap: 12px;
+  }
+
+  .rv-tools select {
+    max-width: 100%;
+  }
+
+  .rv-item {
+    padding: 16px;
+  }
+
+  .rv-meta {
+    gap: 8px 12px;
+  }
+}
