@@ -240,7 +240,7 @@ function renderProduct(p) {
 /* ---- You may also like ---- */
 async function loadRelated(p) {
   try {
-    const res = await fetch('/api/products?room=' + encodeURIComponent(p.room));
+    const res = await fetch('https://veloura-60ur.onrender.com/api/products?room=' + encodeURIComponent(p.room));
     if (!res.ok) return;
     const list = (await res.json()).filter(r => r.id !== p.id);
     list.sort((a, b) => (b.style === p.style) - (a.style === p.style));
@@ -269,7 +269,7 @@ async function loadReviews(p, append) {
   rvProduct = p;
   let d;
   try {
-    const res = await fetch(`/api/reviews/${p.id}?sort=${rvSort}&page=${rvPage}`);
+    const res = await fetch(`https://veloura-60ur.onrender.com/api/reviews/${p.id}?sort=${rvSort}&page=${rvPage}`);
     if (!res.ok) return;
     d = await res.json();
   } catch (e) { return; }
