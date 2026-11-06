@@ -110,7 +110,7 @@ async function load() {
   updateCount();
   if (!Number.isInteger(id)) return notFound();
   try {
-    const res = await fetch('/api/products/' + id);
+    const res = await fetch('https://veloura-60ur.onrender.com/api/products/' + id);
     if (!res.ok) return notFound();
     const p = await res.json();
         renderProduct(p);
